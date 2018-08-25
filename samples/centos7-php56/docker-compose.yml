@@ -7,5 +7,3 @@ services:
       - '8080:80'
     volumes:
       - ./html:/var/www/html
-    links:
-      - db
