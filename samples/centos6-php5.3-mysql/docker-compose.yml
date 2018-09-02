@@ -1,0 +1,35 @@
+version: '3'
+services:
+  web:
+    build: ./web
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./src:/var/www/html
+    links:
+      - "db"
+    networks:
+      app_net:
+        ipv4_address: 172.16.253.3
+  db:
+    image: mysql:5.6
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+    ports:
+      - "33306:3306"
+    volumes:
+      - "./share/mysql/db:/var/lib/mysql" # ホストのディレクトリにDBのデータを保持するようにしている
+      - "./share/mysql/logs/mysql:/var/log/mysql"
+      - "./mysql/init:/docker-entrypoint-initdb.d"
+    command: "mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --sql_mode=STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION"
+    networks:
+      app_net:
+        ipv4_address: 172.16.253.2
+networks:
+  app_net:
+    driver: bridge
+    ipam:
+     driver: default
+     config:
+       - subnet: 172.16.253.0/24
