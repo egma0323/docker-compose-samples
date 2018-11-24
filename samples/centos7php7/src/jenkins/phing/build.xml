@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="phing" default="build">
+  <property environment="env"/>
+  <property name="TARGET_DIR" value="/var/www/html/" />
+
+  <target name="build" depends="phpcs,phpmd" />
+
+  <target name="phpcs">
+    <phpcodesniffer standard="PSR2" file="${TARGET_DIR}" allowedFileExtensions="php">
+      <formatter type="checkstyle" outfile="${env.WORKSPACE}/reports/phpcs.xml"/>
+    </phpcodesniffer>
+  </target>
+
+  <target name="phpmd">
+    <phpmd rulesets="ruleset.xml">
+      <fileset dir="${TARGET_DIR}">
+        <include name="**/*.php" />
+      </fileset>
+      <formatter type="xml" outfile="${env.WORKSPACE}/reports/phpmd.xml"/>
+    </phpmd>
+  </target>
+</project>
