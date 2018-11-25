@@ -75,6 +75,11 @@ RUN chmod 777 /usr/local/bin/phpmd
 
 RUN ln -s /settings/phpcs/CUSTOM /phing/vendor/squizlabs/php_codesniffer/CodeSniffer/Standards/CUSTOM
 
+# nodejs, npm
+RUN yum --enablerepo=epel -y install nodejs npm && \
+    yum clean all
+RUN npm install -g eslint eslint-config-google
+
 # timezone
 RUN cp -p /usr/share/zoneinfo/Japan /etc/localtime
 

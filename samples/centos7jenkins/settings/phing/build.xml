@@ -2,25 +2,45 @@
 <project name="phing" default="build">
   <property environment="env"/>
   <property name="TARGET_DIR" value="${env.WORKSPACE}/" />
-  <property name="SUB_DIR" value="src/front/app/" />
+  <property name="SUB_DIR" value="src/" />
 
-  <target name="build" depends="phpcs,phpmd" />
+  <target name="build" depends="phpcs,phpmd,eslint" />
 
   <target name="phpcs">
     <phpcodesniffer standard="CUSTOM">
-        <fileset dir="${TARGET_DIR}${SUB_DIR}">
-          <include name="**/*.php" />
-        </fileset>
+      <fileset dir="${TARGET_DIR}${SUB_DIR}">
+        <include name="**/app/**/*.php" />
+        <exclude name="**/Plugin/**/*.php" />
+        <exclude name="**/plugins/**/*.php" />
+        <exclude name="**/Vendor/**/*.php" />
+        <exclude name="**/vendors/**/*.php" />
+      </fileset>
       <formatter type="checkstyle" outfile="${env.WORKSPACE}/reports/phpcs.xml"/>
     </phpcodesniffer>
   </target>
 
   <target name="phpmd">
     <phpmd rulesets="ruleset.xml">
-        <fileset dir="${TARGET_DIR}${SUB_DIR}">
-        <include name="**/*.php" />
+      <fileset dir="${TARGET_DIR}${SUB_DIR}">
+        <include name="**/app/**/*.php" />
+        <exclude name="**/Plugin/**/*.php" />
+        <exclude name="**/plugins/**/*.php" />
+        <exclude name="**/Vendor/**/*.php" />
+        <exclude name="**/vendors/**/*.php" />
       </fileset>
       <formatter type="xml" outfile="${env.WORKSPACE}/reports/phpmd.xml"/>
     </phpmd>
+  </target>
+
+  <target name="eslint" description="ESLint">
+    <exec dir="${TARGET_DIR}${SUB_DIR}" executable="eslint" output="${env.WORKSPACE}/reports/eslint.xml">
+      <arg line="-c /settings/config.eslintrc" />
+      <arg line="-f checkstyle" />
+      <arg line="--ignore-pattern *.min.js" />
+      <arg line="--ignore-pattern **/assets/**/*.js" />
+      <arg line="--ignore-pattern **/Plugin/**/*.js" />
+      <arg line="--ignore-pattern **/plugins/**/*.js" />
+      <arg line="**/webroot/js/**/*.js" />
+    </exec>
   </target>
 </project>
